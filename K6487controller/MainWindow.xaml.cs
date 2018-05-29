@@ -25,6 +25,7 @@ namespace K6487controller
 
         private Ivi.Visa.Interop.ResourceManager RM = new Ivi.Visa.Interop.ResourceManager();
         private Ivi.Visa.Interop.FormattedIO488 K6487 = new Ivi.Visa.Interop.FormattedIO488();
+        private int countTrigger = 1;
 
         public MainWindow()
         {
@@ -43,13 +44,21 @@ namespace K6487controller
                 K6487.WriteString("READ?");
                 temp = K6487.ReadString();
 
-                // Split the return string.
-                // eg. +1.040564E-06A, +2.2362990+2, +1.380000E+2, +123.4500
-                //          current      timestamp      status       voltage
-                var splitTemp = temp.Split(',');
-                var current = double.Parse(splitTemp[0].Trim('A'));
-                var timestamp = double.Parse(splitTemp[1]);
-                var status = double.Parse(splitTemp[2]);
+                var splitLines = temp.Split(new String[] { "\n" }, StringSplitOptions.None);
+                var current = 0.0;
+                var timestamp = 0.0;
+                foreach (var line in splitLines)
+                {
+                    // Split the return string.
+                    // eg. +1.040564E-06A, +2.2362990E+2, +1.380000E+2, +123.4500
+                    //          current      timestamp      status       voltage
+                    var splitTemp = temp.Split(',');
+                    current += double.Parse(splitTemp[0].Trim('A'));
+                    timestamp += double.Parse(splitTemp[1]);
+                }
+                current = current / countTrigger;
+                timestamp = timestamp / countTrigger;
+                
                 labelCurrentStep.Content = currentStep;
 
                 Data.Add(new DataPoint(currentStep++, current));
@@ -167,7 +176,6 @@ namespace K6487controller
 
         private void ButtonInitial_Click(object sender, RoutedEventArgs e)
         {
-
             System.Windows.Forms.MessageBox.Show(
                 "Make sure NOT to connect the current to be measured to the picoammeter.",
                 "Zero Check",
@@ -216,8 +224,11 @@ namespace K6487controller
             K6487.WriteString("AVER:COUN 20");
             K6487.WriteString("AVER:TCON MOV");
             K6487.WriteString("AVER ON");
+            // Trigger
+            countTrigger = int.Parse(textTriggerCount.Text);
+            K6487.WriteString(String.Format("TRIG:COUN {0}", countTrigger));
 
-            buttonInitial.IsEnabled = false;
+            buttonInitial.Content = "Re-initialize";
         }
     }
 }

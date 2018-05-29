@@ -22,18 +22,20 @@
                 <oxy:LineSeries ItemsSource="{Binding Data}" Visibility="{Binding IsChecked, ElementName=cbShow, Converter={StaticResource bool2vis}}"/>
             </oxy:Plot.Series>
         </oxy:Plot>
-        <Label x:Name="labelPort" Content="GBPI_Port" HorizontalAlignment="Left" Margin="644,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549"/>
-        <TextBox x:Name="textPort" HorizontalAlignment="Left" Height="18" Margin="644,42,0,0" TextWrapping="Wrap" Text="GPIB0::22::INSTR" VerticalAlignment="Top" Width="125"/>
-        <Label x:Name="labelMeasurementTime" Content="Measurement Time (s)" HorizontalAlignment="Left" Margin="642,67,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549"/>
-        <TextBox x:Name="textMeasurementTime" HorizontalAlignment="Left" Height="18" Margin="644,97,0,0" TextWrapping="Wrap" Text="1800" VerticalAlignment="Top" Width="126" RenderTransformOrigin="0.481,-0.416"/>
-        <Label x:Name="labelIncreasement" Content="Increasement Time (s)" HorizontalAlignment="Left" Margin="644,124,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549"/>
-        <TextBox x:Name="textIncrease" HorizontalAlignment="Left" Height="18" Margin="644,156,0,0" TextWrapping="Wrap" Text="5" VerticalAlignment="Top" Width="126"/>
+        <Label x:Name="labelPort" Content="GBPI_Port" HorizontalAlignment="Left" Margin="644,3,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549"/>
+        <TextBox x:Name="textPort" HorizontalAlignment="Left" Height="18" Margin="644,29,0,0" TextWrapping="Wrap" Text="GPIB0::22::INSTR" VerticalAlignment="Top" Width="125"/>
+        <Label x:Name="labelMeasurementTime" Content="Measurement Time (s)" HorizontalAlignment="Left" Margin="644,47,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549"/>
+        <TextBox x:Name="textMeasurementTime" HorizontalAlignment="Left" Height="18" Margin="644,73,0,0" TextWrapping="Wrap" Text="1800" VerticalAlignment="Top" Width="126" RenderTransformOrigin="0.481,-0.416"/>
+        <Label x:Name="labelIncreasement" Content="Increasement Time (s)" HorizontalAlignment="Left" Margin="644,91,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549"/>
+        <TextBox x:Name="textIncrease" HorizontalAlignment="Left" Height="18" Margin="644,117,0,0" TextWrapping="Wrap" Text="5" VerticalAlignment="Top" Width="126"/>
         <Button x:Name="buttonFile" Content="Select File" HorizontalAlignment="Left" Margin="644,265,0,0" VerticalAlignment="Top" Width="126" Height="35" Click="ButtonFile_Click"/>
         <Button x:Name="buttonInitial" Content="INITITIAL" HorizontalAlignment="Left" Height="35" Margin="644,315,0,0" VerticalAlignment="Top" Width="126" Click="ButtonInitial_Click"/>
         <Button x:Name="buttonStart" Content="START" HorizontalAlignment="Left" Height="35" Margin="644,365,0,0" VerticalAlignment="Top" Width="126" Click="ButtonStart_Click" IsEnabled="False"/>
-        <Label x:Name="labelSteps" Content="Steps: " HorizontalAlignment="Left" Margin="644,190,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549" Width="41"/>
-        <Label x:Name="labelCurrentStep" Content="0" HorizontalAlignment="Left" Margin="644,216,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549" Width="51"/>
-        <Label x:Name="labelStepSlash" Content="/" HorizontalAlignment="Left" Margin="700,215,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549" Width="20"/>
-        <TextBox x:Name="textSteps" Text="361" HorizontalAlignment="Left" Margin="731,220,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549" Width="39" TextAlignment="Center"/>
+        <Label x:Name="labelSteps" Content="Steps: " HorizontalAlignment="Left" Margin="644,201,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549" Width="41"/>
+        <Label x:Name="labelCurrentStep" Content="0" HorizontalAlignment="Left" Margin="644,227,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549" Width="51"/>
+        <Label x:Name="labelStepSlash" Content="/" HorizontalAlignment="Left" Margin="700,226,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549" Width="20"/>
+        <TextBox x:Name="textSteps" Text="361" HorizontalAlignment="Left" Margin="731,231,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549" Width="39" TextAlignment="Center"/>
+        <Label x:Name="labelTriggerCount" Content="Trigger Count" HorizontalAlignment="Left" Margin="644,135,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549"/>
+        <TextBox x:Name="textTriggerCount" HorizontalAlignment="Left" Height="18" Margin="644,161,0,0" TextWrapping="Wrap" Text="8" VerticalAlignment="Top" Width="126"/>
     </Grid>
 </Window>
