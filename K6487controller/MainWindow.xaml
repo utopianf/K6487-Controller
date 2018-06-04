@@ -13,10 +13,10 @@
     </Window.Resources>
 
     <Grid x:Name="Controller">
-        <oxy:Plot Margin="0,0,165,0.5">
+        <oxy:Plot Margin="10,10,165,10">
             <oxy:Plot.Axes>
-                <oxy:LinearAxis Title="Step" Position="Bottom" Minimum="0"/>
-                <oxy:LinearAxis Title="Current" Position="Left"/>
+                <oxy:LinearAxis Title="Timestamp (min)" Position="Bottom" Minimum="0"/>
+                <oxy:LinearAxis Title="Current (A)" Position="Left"/>
             </oxy:Plot.Axes>
             <oxy:Plot.Series>
                 <oxy:LineSeries ItemsSource="{Binding Data}" Visibility="{Binding IsChecked, ElementName=cbShow, Converter={StaticResource bool2vis}}"/>
@@ -28,7 +28,9 @@
         <TextBox x:Name="textMeasurementTime" HorizontalAlignment="Left" Height="18" Margin="644,73,0,0" TextWrapping="Wrap" Text="1800" VerticalAlignment="Top" Width="126" RenderTransformOrigin="0.481,-0.416"/>
         <Label x:Name="labelIncreasement" Content="Increasement Time (s)" HorizontalAlignment="Left" Margin="644,91,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549"/>
         <TextBox x:Name="textIncrease" HorizontalAlignment="Left" Height="18" Margin="644,117,0,0" TextWrapping="Wrap" Text="5" VerticalAlignment="Top" Width="126"/>
-        <Button x:Name="buttonFile" Content="Select File" HorizontalAlignment="Left" Margin="644,265,0,0" VerticalAlignment="Top" Width="126" Height="35" Click="ButtonFile_Click"/>
+        <Button x:Name="buttonFile" HorizontalAlignment="Left" Margin="644,265,0,0" VerticalAlignment="Top" Width="126" Height="35" Click="ButtonFile_Click">
+            <TextBlock x:Name="innerButtonFile" TextWrapping="Wrap" Text="Select File" />
+        </Button>
         <Button x:Name="buttonInitial" Content="INITITIAL" HorizontalAlignment="Left" Height="35" Margin="644,315,0,0" VerticalAlignment="Top" Width="126" Click="ButtonInitial_Click"/>
         <Button x:Name="buttonStart" Content="START" HorizontalAlignment="Left" Height="35" Margin="644,365,0,0" VerticalAlignment="Top" Width="126" Click="ButtonStart_Click" IsEnabled="False"/>
         <Label x:Name="labelSteps" Content="Steps: " HorizontalAlignment="Left" Margin="644,201,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.263,1.549" Width="41"/>

@@ -42,26 +42,29 @@ namespace K6487controller
             if (currentStep <= numStep)
             {
                 K6487.WriteString("READ?");
+                // wait for trigger
+                System.Threading.Thread.Sleep(2000);
                 temp = K6487.ReadString();
 
-                var splitLines = temp.Split(new String[] { "\n" }, StringSplitOptions.None);
+                var splitTemp = temp.Split(',');
                 var current = 0.0;
                 var timestamp = 0.0;
-                foreach (var line in splitLines)
+                for (int i = 0; i < splitTemp.Length / int.Parse(textTriggerCount.Text); i++)
                 {
                     // Split the return string.
-                    // eg. +1.040564E-06A, +2.2362990E+2, +1.380000E+2, +123.4500
-                    //          current      timestamp      status       voltage
-                    var splitTemp = temp.Split(',');
-                    current += double.Parse(splitTemp[0].Trim('A'));
-                    timestamp += double.Parse(splitTemp[1]);
+                    // eg. +1.040564E-06A, +2.2362990E+2, +1.380000E+2, (+123.4500)
+                    //          current      timestamp      status       (voltage)
+                    current += double.Parse(splitTemp[3 * i].Trim('A'));
+                    timestamp += double.Parse(splitTemp[3 * i + 1]);
                 }
                 current = current / countTrigger;
                 timestamp = timestamp / countTrigger;
-                
+                currentStep++;
+
                 labelCurrentStep.Content = currentStep;
 
-                Data.Add(new DataPoint(currentStep++, current));
+                // DataPoint(timestamp (min), current (A))
+                Data.Add(new DataPoint(timestamp / 60.0, current));
                 using (StreamWriter sw = File.AppendText(fileName))
                 {
                     sw.WriteLine("{0},{1},{2}", currentStep, timestamp, current);
@@ -69,11 +72,15 @@ namespace K6487controller
             }
             else
             {
+                K6487.WriteString("DISP:ENAB ON");
                 timer.IsEnabled = false;
 
                 K6487.IO.Close();
                 System.Runtime.InteropServices.Marshal.ReleaseComObject(K6487);
                 System.Runtime.InteropServices.Marshal.ReleaseComObject(RM);
+
+                buttonInitial.IsEnabled = true;
+                buttonStart.Content = "START";
             }
         }
 
@@ -88,17 +95,20 @@ namespace K6487controller
 
         private void TextSteps_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (textMeasurementTime.Text != "" && textSteps.Text != "")
             textIncrease.Text = (float.Parse(textMeasurementTime.Text) / (float.Parse(textSteps.Text) - 1.0)).ToString();
         }
 
         private void TextMeasurementTime_TextChanged(object sender, TextChangedEventArgs e)
         {
-            textSteps.Text = ((int)(float.Parse(textMeasurementTime.Text) / float.Parse(textIncrease.Text) + 1.0)).ToString();
+            if (textMeasurementTime.Text != "" && textIncrease.Text != "")
+                textSteps.Text = ((int)(float.Parse(textMeasurementTime.Text) / float.Parse(textIncrease.Text) + 1.0)).ToString();
         }
 
         private void TextIncrease_TextChanged(object sender, TextChangedEventArgs e)
         {
-            textSteps.Text = ((int)(float.Parse(textMeasurementTime.Text) / float.Parse(textIncrease.Text) + 1.0)).ToString();
+            if (textMeasurementTime.Text != "" && textIncrease.Text != "")
+                textSteps.Text = ((int)(float.Parse(textMeasurementTime.Text) / float.Parse(textIncrease.Text) + 1.0)).ToString();
         }
 
         private void ButtonStart_Click(object sender, RoutedEventArgs e)
@@ -117,6 +127,8 @@ namespace K6487controller
                     timer.IsEnabled = false;
                     buttonStart.Content = "START";
                     buttonInitial.IsEnabled = true;
+
+                    K6487.WriteString("DISP:ENAB ON");
                 }
                 return;
             }
@@ -143,13 +155,14 @@ namespace K6487controller
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 // Setup timer
-                Int32 measuretime = Convert.ToInt32(textMeasurementTime.Text);
-                Int32 increasement = Convert.ToInt32(textIncrease.Text);
+                var measuretime = Convert.ToInt32(textMeasurementTime.Text);
+                var increasement = Convert.ToInt32(textIncrease.Text);
 
                 currentStep = 0;
                 numStep = Convert.ToInt32(textSteps.Text);
                 Data = new ObservableCollection<DataPoint>();
-
+                
+                K6487.WriteString("DISP:ENAB OFF");
                 K6487.WriteString("SYST:TIME:RES");
                 timer.Interval = TimeSpan.FromSeconds(increasement);
                 timer.IsEnabled = true;
@@ -160,7 +173,6 @@ namespace K6487controller
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.InitialDirectory = "c:\\";
                 openFileDialog.Title = "ファイルを開く";
                 openFileDialog.Filter = "全てのファイル(*.*)|*.*";
                 openFileDialog.RestoreDirectory = true;
@@ -169,7 +181,7 @@ namespace K6487controller
                 if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     fileName = openFileDialog.FileName;
-                    buttonFile.Content = fileName;
+                    innerButtonFile.Text = fileName;
                 }
             }
         }
@@ -218,6 +230,7 @@ namespace K6487controller
             K6487.WriteString("SYST:ZCOR ON");
             K6487.WriteString("CURR:RANG:AUTO ON");
             K6487.WriteString("SYST:ZCH OFF");
+            K6487.WriteString("TRAC:TST:FORM DEL");
             // Filter
             K6487.WriteString("MED:RANK 5");
             K6487.WriteString("MED ON");
@@ -228,7 +241,16 @@ namespace K6487controller
             countTrigger = int.Parse(textTriggerCount.Text);
             K6487.WriteString(String.Format("TRIG:COUN {0}", countTrigger));
 
+            var sts = 0;
+            while (sts == 1)
+            {
+                K6487.WriteString("*OPC?");
+                System.Threading.Thread.Sleep(1000);
+                sts = K6487.ReadNumber();
+            }
+
             buttonInitial.Content = "Re-initialize";
+            buttonStart.IsEnabled = true;
         }
     }
 }
